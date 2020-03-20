@@ -1,0 +1,4 @@
+name: dynamicDigitalocean
+main: me.unixfox.dynamicDigitalocean.DynamicDigitalocean
+version: 1.0
+author: username
