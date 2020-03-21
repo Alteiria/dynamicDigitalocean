@@ -12,9 +12,6 @@ import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.config.ServerInfo;
 
-/**
- * ServerChecker
- */
 public class CheckServer {
 
     private ServerInfo server;
