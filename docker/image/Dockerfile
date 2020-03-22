@@ -13,7 +13,7 @@ RUN npm i -g mc-server-status
 
 WORKDIR /tmp
 
-RUN wget https://github.com/digitalocean/doctl/releases/download/v1.39.0/doctl-1.39.0-linux-amd64.tar.gz -O /tmp/doctl.tar.gz
+RUN wget https://github.com/digitalocean/doctl/releases/download/v1.39.0/doctl-1.39.0-linux-amd64.tar.gz --quiet -O /tmp/doctl.tar.gz
 
 RUN tar xzvf doctl.tar.gz
 
