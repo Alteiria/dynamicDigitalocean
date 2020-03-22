@@ -5,6 +5,13 @@ if [ ! -f "/config/core.json" ]; then
 fi
 
 access_token=$(jq -r '.keys'[0] /config/core.json)
+
+echo "[INFO] Waiting for the daemon API to come up."
+until $(curl --output /dev/null --silent --head --fail -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080); do
+    printf '.'
+    sleep 5
+done
+
 servers=$(curl -k -s -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/servers)
 counter=0
 sleep_10_seconds=$(( $SLEEP_MIN*6 ))
