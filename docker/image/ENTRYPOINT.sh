@@ -20,7 +20,7 @@ echo "[INFO] Starting all servers..."
 
 for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
     echo "[INFO] Starting server with ID: ${serverID}."
-    curl -s -X PUT -d '{"action":"start"}' -H "X-Access-Server: ${serverID}" \
+    curl -s -X PUT -d '{"action":"start"}' -H "X-Access-Server: ${serverID}" -k \
     -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/server/power
 done
 
