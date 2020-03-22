@@ -25,7 +25,7 @@ services:
             - /mnt/pterodactyl/daemon/config:/srv/daemon/config
             - /mnt/pterodactyl/daemon/packs:/srv/daemon/packs
             - /mnt/daemon-data:/srv/daemon-data
-            - /mnt/letsencrypt:/srv/daemon/certs
+            - /mnt/letsencrypt/etc/letsencrypt:/etc/letsencrypt
             - /tmp/pterodactyl:/tmp/pterodactyl
             - /etc/localtime:/etc/localtime
             - ${DOCKER_ROOT:-/var/lib/docker}:${DOCKER_ROOT:-/var/lib/docker}
