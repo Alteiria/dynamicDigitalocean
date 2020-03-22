@@ -15,9 +15,7 @@ services:
     checker:
         depends_on:
             - daemon
-        build:
-            context: ./image
-            dockerfile: Dockerfile
+        image: alteiria/dynamicdigitalocean
         restart: always
         networks:
             - default
