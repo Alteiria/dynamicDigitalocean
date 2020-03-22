@@ -5,7 +5,7 @@ if [ ! -f "/config/core.json" ]; then
 fi
 
 access_token=$(jq -r '.keys'[0] /config/core.json)
-servers=$(curl -k https://daemon:8080/v1/servers)
+servers=$(curl -k -s -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/servers)
 counter=0
 sleep_10_seconds=$(( 6*$SLEEP_MIN ))
 
