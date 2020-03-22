@@ -7,7 +7,7 @@ services:
             - URL=${HOSTNAME}
             - VALIDATION=http
         volumes:
-            - "/data/letsencrypt:/config"
+            - "/mnt/letsencrypt:/config"
         restart: always
         ports:
             - 80:80
@@ -22,10 +22,10 @@ services:
         privileged: true
         restart: always
         volumes:
-            - /data/pterodactyl/daemon/config:/srv/daemon/config
-            - /data/pterodactyl/daemon/packs:/srv/daemon/packs
-            - /data/daemon-data:/srv/daemon-data
-            - /data/letsencrypt:/srv/daemon/certs
+            - /mnt/pterodactyl/daemon/config:/srv/daemon/config
+            - /mnt/pterodactyl/daemon/packs:/srv/daemon/packs
+            - /mnt/daemon-data:/srv/daemon-data
+            - /mnt/letsencrypt:/srv/daemon/certs
             - /tmp/pterodactyl:/tmp/pterodactyl
             - /etc/localtime:/etc/localtime
             - ${DOCKER_ROOT:-/var/lib/docker}:${DOCKER_ROOT:-/var/lib/docker}
