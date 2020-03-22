@@ -11,6 +11,21 @@ services:
         restart: always
         ports:
             - 80:80
+    
+    checker:
+        depends_on:
+            - daemon
+        image: alteiria/dynamicdigitalocean
+        restart: always
+        networks:
+            - default
+        volumes:
+            - /srv/daemon/config:/config
+            - /etc/hostname
+        environment:
+            - DO_API_TOKEN=${DO_API_TOKEN}
+            - HOSTNAME=${HOSTNAME}
+            - SLEEP_MIN=${SLEEP_MIN:-30}
 
     daemon:
         depends_on:
