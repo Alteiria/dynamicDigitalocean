@@ -20,7 +20,7 @@ echo "[INFO] Starting all servers..."
 
 for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
     echo "[INFO] Starting server with ID: ${serverID}."
-    curl -s -X PUT -d '{"action":"start"}' -H "X-Access-Server: ${serverID}" -k \
+    curl -s --output /dev/null -X PUT -d '{"action":"start"}' -H "X-Access-Server: ${serverID}" -k \
     -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/server/power
 done
 
@@ -43,7 +43,7 @@ done
 echo "[WARN] There is nobody on the server, shutting down all MC servers and the Droplet!"
 
 for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
-    curl -X PUT -d '{"action":"stop"}' -H "X-Access-Server: ${serverID}" -k -s \
+    curl -X PUT --output /dev/null -d '{"action":"stop"}' -H "X-Access-Server: ${serverID}" -k -s \
     -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/server/power
 done
 
