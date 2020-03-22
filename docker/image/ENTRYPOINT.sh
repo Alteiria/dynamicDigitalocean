@@ -9,8 +9,8 @@ servers=$(curl -k -s -H "X-Access-Token: ${access_token}" -H "Content-Type: appl
 counter=0
 sleep_10_seconds=$(( 6*$SLEEP_MIN ))
 
-for serverID in $(jq -r '. | keys | .[]' ${servers}); do
-    curl -X PUT -d '{"action":"start"}' -H "X-Access-Server: ${serverID}" \
+for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
+    curl -s -X PUT -d '{"action":"start"}' -H "X-Access-Server: ${serverID}" \
     -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/server/power
 done
 
@@ -26,7 +26,7 @@ do
     sleep 10s
 done
 
-for serverID in $(jq -r '. | keys | .[]' ${servers}); do
+for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
     curl -X PUT -d '{"action":"stop"}' -H "X-Access-Server: ${serverID}" \
     -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/server/power
 done
