@@ -92,7 +92,9 @@ public class DigitaloceanApi {
     }
 
     public String getDropletFirstIPv4(String name) {
-        return (getDroplet(name).getNetworks().getVersion4Networks().get(0).getIpAddress());
+        if (!getDroplet(name).getNetworks().getVersion4Networks().isEmpty())
+            return (getDroplet(name).getNetworks().getVersion4Networks().get(0).getIpAddress());
+        return(null);
     }
 
     public DomainRecord getRecord(String name) {
@@ -158,7 +160,8 @@ public class DigitaloceanApi {
         try {
             if (hasVolume(name)) {
                 Droplet newDroplet = new Droplet();
-                InputStream downloadUserData = new URL("https://github.com/Alteiria/dynamicDigitalocean/raw/master/vm/cloudinit.yaml").openStream();
+                InputStream downloadUserData = new URL(
+                        "https://github.com/Alteiria/dynamicDigitalocean/raw/master/vm/cloudinit.yaml").openStream();
                 String userData = IOUtils.toString(downloadUserData);
                 newDroplet.setName(fqdn);
                 newDroplet.setSize(dropletSize);
