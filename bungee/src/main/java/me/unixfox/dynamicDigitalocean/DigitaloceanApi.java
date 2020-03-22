@@ -1,5 +1,10 @@
 package me.unixfox.dynamicDigitalocean;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
 
 import com.myjeeva.digitalocean.DigitalOcean;
@@ -150,12 +155,15 @@ public class DigitaloceanApi {
         try {
             if (hasVolume(name)) {
                 Droplet newDroplet = new Droplet();
+                URL website = new URL("https://github.com/Alteiria/dynamicDigitalocean/raw/master/vm/cloudinit.yaml");
+                ReadableByteChannel rbc = Channels.newChannel(website.openStream());
                 newDroplet.setName(fqdn);
                 newDroplet.setSize(dropletSize);
                 newDroplet.setRegion(new Region(region));
                 newDroplet.setEnableIpv6(Boolean.TRUE);
                 newDroplet.setImage(new Image(imageID));
                 newDroplet.setVolumeIds(Arrays.asList(getVolumeID(name)));
+                newDroplet.setUserData(rbc.toString());
                 newDroplet.setTags(Arrays.asList(tag));
                 if (sshKeyID != 0)
                     newDroplet.setKeys(Arrays.asList(new Key(sshKeyID)));
@@ -174,6 +182,12 @@ public class DigitaloceanApi {
             e.printStackTrace();
         } catch (RequestUnsuccessfulException e) {
             System.out.println(requestUnsuccessfulExceptionMessage);
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
