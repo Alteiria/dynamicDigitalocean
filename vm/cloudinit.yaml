@@ -19,7 +19,7 @@ runcmd:
   - ["bash", "/var/tmp/init.sh"]
 
 write_files:
-  - content: ewogImRhdGEtcm9vdCI6ICIvc3J2L2RvY2tlciIKfQ==
+  - content: ewogImRhdGEtcm9vdCI6ICIvc3J2L2RvY2tlciIsCiAibG9nLWRyaXZlciI6ICJqc29uLWZpbGUiLAogImxvZy1vcHRzIjogeyJtYXgtc2l6ZSI6ICIxMG0iLCAibWF4LWZpbGUiOiAiMyJ9Cn0=
     encoding: b64
     owner: "root:root"
     path: /etc/docker/daemon.json
