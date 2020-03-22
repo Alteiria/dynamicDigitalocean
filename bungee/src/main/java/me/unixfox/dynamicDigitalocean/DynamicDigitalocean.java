@@ -14,6 +14,6 @@ public class DynamicDigitalocean extends Plugin {
         toml.setDefault("general.imageID", "50944795");
         toml.setDefault("general.domain", "example.org");
         getLogger().info("Yay! It loads!");
-        getProxy().getPluginManager().registerListener(this, new Events());
+        getProxy().getPluginManager().registerListener(this, new Events(this));
     }
 }

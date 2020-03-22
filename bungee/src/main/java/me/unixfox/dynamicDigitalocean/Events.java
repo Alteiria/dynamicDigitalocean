@@ -1,5 +1,7 @@
 package me.unixfox.dynamicDigitalocean;
 
+import java.util.concurrent.TimeUnit;
+
 import de.leonhard.storage.Toml;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -12,26 +14,31 @@ public class Events implements Listener {
 
     private Toml toml = new Toml("config", "plugins/dynamicDigitalocean");
     String domainName = toml.get("general.domain", "example.org");
+    private final DynamicDigitalocean plugin;
 
-    public Events() {
+    public Events(final DynamicDigitalocean plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onConnect(ServerConnectEvent event) {
-        DigitaloceanApi digitaloceanApiWrapper = new DigitaloceanApi();
+        DigitaloceanApi digitaloceanApiWrapper = new DigitaloceanApi(plugin);
         ProxiedPlayer player = event.getPlayer();
         ServerInfo server = event.getTarget();
         String serverName = server.getName().toLowerCase();
         String fqdn = serverName + "." + domainName;
-        System.out.println(serverName);
         CheckServer serverChecker = new CheckServer(server);
         if (!serverChecker.isOnline() && serverName.substring(0, 4).equals("dydo")) {
-            System.out.println("digitalocean");
             event.setCancelled(true);
-            player.disconnect(TextComponent.fromLegacyText("offline"));
-            if (!digitaloceanApiWrapper.hasDroplet(fqdn)) {
-                digitaloceanApiWrapper.createDroplet(serverName);
-            }
+            player.disconnect(TextComponent.fromLegacyText("Hello " + player.getDisplayName() + "!\n" + "The server is not ready yet. Please come back in two minutes."));
+            plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    if (!digitaloceanApiWrapper.hasDroplet(fqdn)) {
+                        digitaloceanApiWrapper.createDroplet(serverName);
+                    }
+                }
+            }, 1, 1440, TimeUnit.MINUTES);
         }
 
     }

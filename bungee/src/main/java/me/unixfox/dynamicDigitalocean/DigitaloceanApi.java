@@ -37,8 +37,10 @@ public class DigitaloceanApi {
     private DigitalOcean apiClient = new DigitalOceanClient(apiKey);
     private String digitalOceanExceptionMessage = "DigitalOcean considered that the request was incorrect. Please verify that your config.toml is correct.";
     private String requestUnsuccessfulExceptionMessage = "Error communicating with DigitalOcean.";
+    private final DynamicDigitalocean plugin;
 
-    public DigitaloceanApi() {
+    public DigitaloceanApi(final DynamicDigitalocean plugin) {
+        this.plugin = plugin;
     }
 
     public boolean hasVolume(String name) {
@@ -62,10 +64,10 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            System.out.println(digitalOceanExceptionMessage);
+            plugin.getLogger().warning(digitalOceanExceptionMessage);
             e.printStackTrace();
         } catch (RequestUnsuccessfulException e) {
-            System.out.println(requestUnsuccessfulExceptionMessage);
+            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
             e.printStackTrace();
         }
         return (null);
@@ -80,10 +82,10 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            System.out.println(digitalOceanExceptionMessage);
+            plugin.getLogger().warning(digitalOceanExceptionMessage);
             e.printStackTrace();
         } catch (RequestUnsuccessfulException e) {
-            System.out.println(requestUnsuccessfulExceptionMessage);
+            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
             e.printStackTrace();
         }
         return (null);
@@ -102,10 +104,10 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            System.out.println(digitalOceanExceptionMessage);
+            plugin.getLogger().warning(digitalOceanExceptionMessage);
             e.printStackTrace();
         } catch (RequestUnsuccessfulException e) {
-            System.out.println(requestUnsuccessfulExceptionMessage);
+            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
             e.printStackTrace();
         }
         return (null);
@@ -134,10 +136,10 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            System.out.println(digitalOceanExceptionMessage);
+            plugin.getLogger().warning(digitalOceanExceptionMessage);
             e.printStackTrace();
         } catch (RequestUnsuccessfulException e) {
-            System.out.println(requestUnsuccessfulExceptionMessage);
+            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
             e.printStackTrace();
         }
     }
@@ -174,35 +176,17 @@ public class DigitaloceanApi {
                     ;
                 IPv4address = getDropletFirstIPv4(fqdn);
                 addOrUpdateIPv4Record(IPv4address, name);
-                System.out.println(IPv4address);
             } else {
-                System.out.println("The volume " + name + " doesn't exist yet, please create it manually.");
+                plugin.getLogger().warning("The volume " + name + " doesn't exist yet, please create it manually.");
             }
         } catch (DigitalOceanException e) {
-            System.out.println(digitalOceanExceptionMessage);
+            plugin.getLogger().warning(digitalOceanExceptionMessage);
             e.printStackTrace();
         } catch (RequestUnsuccessfulException e) {
-            System.out.println(requestUnsuccessfulExceptionMessage);
+            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
             e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("Error while downloading the user data.");
-            e.printStackTrace();
-        }
-    }
-
-    public void createRecordAndDeleteExisting(String name) {
-        try {
-            if (apiClient.getDomainInfo(domainName) != null) {
-                DomainRecord input = new DomainRecord("test1", "@", "CNAME");
-                apiClient.createDomainRecord("jeeutil.com", input);
-            } else {
-                System.out.println("Domain specified doesn't exist.");
-            }
-        } catch (DigitalOceanException e) {
-            System.out.println(digitalOceanExceptionMessage);
-            e.printStackTrace();
-        } catch (RequestUnsuccessfulException e) {
-            System.out.println(requestUnsuccessfulExceptionMessage);
+            plugin.getLogger().warning("Error while downloading the user data.");
             e.printStackTrace();
         }
     }

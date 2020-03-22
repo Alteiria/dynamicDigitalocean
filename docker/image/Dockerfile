@@ -1,6 +1,6 @@
 FROM alpine:3.11
 
-ENV SLEEP_MIN=30 \
+ENV SLEEP_MIN=20 \
       HOSTNAME=\
       DO_API_TOKEN=
 
