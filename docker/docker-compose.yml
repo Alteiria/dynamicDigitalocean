@@ -14,7 +14,7 @@ services:
 
     daemon:
         depends_on:
-            - certbot
+            - letsencrypt
         image: ccarney16/pterodactyl-daemon:latest
         ports:
             - 443:443
