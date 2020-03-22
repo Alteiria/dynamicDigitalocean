@@ -1,0 +1,38 @@
+version: "3"
+services:
+    letsencrypt:
+        image: linuxserver/letsencrypt
+        container_name: letsencrypt
+        environment:
+            - URL=${HOSTNAME}
+            - VALIDATION=http
+        volumes:
+            - "/data/letsencrypt:/config"
+        restart: always
+        ports:
+            - 80:80
+
+    daemon:
+        depends_on:
+            - certbot
+        image: ccarney16/pterodactyl-daemon:latest
+        ports:
+            - 443:443
+            - 2022:2022
+        privileged: true
+        restart: always
+        volumes:
+            - /data/pterodactyl/daemon/config:/srv/daemon/config
+            - /data/pterodactyl/daemon/packs:/srv/daemon/packs
+            - /data/daemon-data:/srv/daemon-data
+            - /data/letsencrypt:/srv/daemon/certs
+            - /tmp/pterodactyl:/tmp/pterodactyl
+            - /etc/localtime:/etc/localtime
+            - ${DOCKER_ROOT:-/var/lib/docker}:${DOCKER_ROOT:-/var/lib/docker}
+            - ${DOCKER_SOCKET:-/var/run/docker.sock}:${DOCKER_SOCKET:-/var/run/docker.sock}
+    watchtower:
+        image: containrrr/watchtower
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /root/.docker/config.json:/config.json
+        command: --interval 30
