@@ -25,7 +25,7 @@ public class DigitaloceanApi {
     private String region = toml.get("general.region", "ams3");
     private String dropletSize = toml.get("general.size", "s-2vcpu-4gb");
     private int sshKeyID = Integer.parseInt(toml.get("general.sshKeyID", "0"));
-    private int imageID = Integer.parseInt(toml.get("general.imageID", "111111"));
+    private int imageID = Integer.parseInt(toml.get("general.imageID", "50944795"));
     private String domainName = toml.get("general.domain", "example.org");
     private String tag = "dynamicdigitalocean";
     private DigitalOcean apiClient = new DigitalOceanClient(apiKey);
@@ -146,12 +146,14 @@ public class DigitaloceanApi {
     }
 
     public void createDroplet(String name) {
+        String fqdn = name + "." + domainName;
         try {
             if (hasVolume(name)) {
                 Droplet newDroplet = new Droplet();
-                newDroplet.setName(name);
+                newDroplet.setName(fqdn);
                 newDroplet.setSize(dropletSize);
                 newDroplet.setRegion(new Region(region));
+                newDroplet.setEnableIpv6(Boolean.TRUE);
                 newDroplet.setImage(new Image(imageID));
                 newDroplet.setVolumeIds(Arrays.asList(getVolumeID(name)));
                 newDroplet.setTags(Arrays.asList(tag));

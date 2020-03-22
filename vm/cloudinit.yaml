@@ -1,0 +1,26 @@
+#cloud-config
+#doctl compute droplet create dydobuild.do.alteiria.fr --enable-ipv6 --image 50944795 --region ams3 --ssh-keys 25332773 --volumes "fb1482bc-6c32-11ea-bc36-0a58ac14813b" --user-data-file=/home/emilien/Documents/dynamicDigitalocean/vm/cloudinit.yaml --size s-2vcpu-4gb --wait
+#doctl compute droplet delete dydobuild.do.alteiria.fr -f
+#doctl compute volume create --size 5GiB --region ams3 dydobuild
+
+timezone: Europe/Paris
+
+runcmd:
+  - [umount, "/dev/sda"]
+  - [mkdir, "-p", "/data"]
+  - [mount, "/dev/sda", "/data"]
+  - [ufw, disable]
+  - [
+      wget,
+      "https://github.com/Alteiria/dynamicDigitalocean/raw/master/vm/init.sh",
+      "-O",
+      "/var/tmp/init.sh",
+    ]
+  - ["bash", "/var/tmp/init.sh"]
+
+write_files:
+  - content: ewogImRhdGEtcm9vdCI6ICIvbW50L2RvY2tlciIKfQ==
+    encoding: b64
+    owner: "root:root"
+    path: /etc/docker/daemon.json
+    permissions: "0644"

@@ -11,7 +11,7 @@ public class DynamicDigitalocean extends Plugin {
         toml.setDefault("general.region", "ams3");
         toml.setDefault("general.size", "s-2vcpu-4gb");
         toml.setDefault("general.sshKeyID", "0");
-        toml.setDefault("general.imageID", "111111");
+        toml.setDefault("general.imageID", "50944795");
         toml.setDefault("general.domain", "example.org");
         getLogger().info("Yay! It loads!");
         getProxy().getPluginManager().registerListener(this, new Events());
