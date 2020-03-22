@@ -7,7 +7,7 @@ ENV SLEEP_MIN=30 \
 RUN addgroup -g 1000 -S checker && \
     adduser -u 1000 -S checker -G checker
 
-RUN apk add --no-cache bash jq npm nodejs
+RUN apk add --no-cache bash jq npm nodejs curl
 
 RUN npm i -g mc-server-status
 
