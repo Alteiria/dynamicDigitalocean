@@ -22,8 +22,8 @@ services:
         privileged: true
         restart: always
         volumes:
-            - /mnt/pterodactyl/daemon/config:/srv/daemon/config
-            - /mnt/pterodactyl/daemon/packs:/srv/daemon/packs
+            - /mnt/daemon/config:/srv/daemon/config
+            - /mnt/daemon/packs:/srv/daemon/packs
             - /mnt/daemon-data:/srv/daemon-data
             - /mnt/letsencrypt/etc/letsencrypt:/etc/letsencrypt
             - /tmp/pterodactyl:/tmp/pterodactyl
