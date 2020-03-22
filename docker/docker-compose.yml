@@ -22,8 +22,7 @@ services:
         networks:
             - default
         volumes:
-            - /srv/daemon/config:/config
-            - /etc/hostname
+            - /srv/daemon/config:/config:ro
         environment:
             - DO_API_TOKEN=${DO_API_TOKEN}
             - HOSTNAME=${HOSTNAME}
