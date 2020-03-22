@@ -40,4 +40,6 @@ for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
     -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/server/power
 done
 
+sleep 5m
+
 /usr/bin/doctl compute droplet delete -t ${DO_API_TOKEN} -f ${HOSTNAME}
