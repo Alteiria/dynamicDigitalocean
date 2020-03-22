@@ -7,12 +7,12 @@ fi
 access_token=$(jq -r '.keys'[0] /config/core.json)
 servers=$(curl -k -s -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/servers)
 counter=0
-sleep_10_seconds=$(( 6*$SLEEP_MIN ))
+sleep_10_seconds=$(( $SLEEP_MIN*6 ))
 
-echo "[INFO] Start all servers"
+echo "[INFO] Starting all servers..."
 
 for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
-    echo "[INFO] Starting server with ID: ${serverID}"
+    echo "[INFO] Starting server with ID: ${serverID}."
     curl -s -X PUT -d '{"action":"start"}' -H "X-Access-Server: ${serverID}" \
     -H "X-Access-Token: ${access_token}" -H "Content-Type: application/json" https://daemon:8080/v1/server/power
 done
@@ -23,7 +23,9 @@ echo "[INFO] Waiting for 0 player on the main server under ${SLEEP_MIN} minutes.
 
 while [ $counter -le ${sleep_10_seconds} ]
 do
-    if [[ $(mc-status --json ${HOSTNAME} | jq '.players.online') -eq 0 ]]; then
+    players_number=$(mc-status --json ${HOSTNAME} | jq '.players.online')
+    echo "There is ${players_number} on the main server and the countdown is at $(( $counter/6 )) minutes."
+    if [[ $players_number -eq 0 ]]; then
         counter=$(( $counter + 1 ))
     else
         counter=0
