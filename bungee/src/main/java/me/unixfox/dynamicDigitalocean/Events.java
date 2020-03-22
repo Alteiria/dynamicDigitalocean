@@ -34,7 +34,6 @@ public class Events implements Listener {
             plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    plugin.getLogger().info("hello");
                     if (!digitaloceanApiWrapper.hasDroplet(fqdn)) {
                         digitaloceanApiWrapper.createDroplet(serverName);
                     }
