@@ -21,6 +21,8 @@ services:
             - 2022:2022
         privileged: true
         restart: always
+        networks:
+            - default
         volumes:
             - /mnt/daemon/config:/srv/daemon/config
             - /mnt/daemon/packs:/srv/daemon/packs
@@ -36,3 +38,10 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
             - /root/.docker/config.json:/config.json
         command: --interval 30
+
+networks:
+    default:
+        ipam:
+            driver: default
+            config:
+                - subnet: "172.16.238.0/24"
