@@ -1,1 +1,1 @@
-HOSTNAME=$(hostname) docker-compose up -d
+HOSTNAME=$(hostname -f) docker-compose up -d
