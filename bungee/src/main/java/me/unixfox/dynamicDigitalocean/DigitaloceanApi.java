@@ -1,10 +1,9 @@
 package me.unixfox.dynamicDigitalocean;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
 
 import com.myjeeva.digitalocean.DigitalOcean;
@@ -20,6 +19,8 @@ import com.myjeeva.digitalocean.pojo.Key;
 import com.myjeeva.digitalocean.pojo.Region;
 import com.myjeeva.digitalocean.pojo.Volume;
 import com.myjeeva.digitalocean.pojo.Volumes;
+
+import org.apache.commons.io.IOUtils;
 
 import de.leonhard.storage.Toml;
 
@@ -155,23 +156,23 @@ public class DigitaloceanApi {
         try {
             if (hasVolume(name)) {
                 Droplet newDroplet = new Droplet();
-                URL website = new URL("https://github.com/Alteiria/dynamicDigitalocean/raw/master/vm/cloudinit.yaml");
-                ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+                InputStream downloadUserData = new URL("https://github.com/Alteiria/dynamicDigitalocean/raw/master/vm/cloudinit.yaml").openStream();
+                String userData = IOUtils.toString(downloadUserData);
                 newDroplet.setName(fqdn);
                 newDroplet.setSize(dropletSize);
                 newDroplet.setRegion(new Region(region));
                 newDroplet.setEnableIpv6(Boolean.TRUE);
                 newDroplet.setImage(new Image(imageID));
                 newDroplet.setVolumeIds(Arrays.asList(getVolumeID(name)));
-                newDroplet.setUserData(rbc.toString());
+                newDroplet.setUserData(userData);
                 newDroplet.setTags(Arrays.asList(tag));
                 if (sshKeyID != 0)
                     newDroplet.setKeys(Arrays.asList(new Key(sshKeyID)));
                 apiClient.createDroplet(newDroplet);
                 String IPv4address = "0.0.0.0";
-                while (getDroplet(name).getNetworks().getVersion4Networks().isEmpty())
+                while (getDroplet(fqdn).getNetworks().getVersion4Networks().isEmpty())
                     ;
-                IPv4address = getDropletFirstIPv4(name);
+                IPv4address = getDropletFirstIPv4(fqdn);
                 addOrUpdateIPv4Record(IPv4address, name);
                 System.out.println(IPv4address);
             } else {
@@ -183,11 +184,8 @@ public class DigitaloceanApi {
         } catch (RequestUnsuccessfulException e) {
             System.out.println(requestUnsuccessfulExceptionMessage);
             e.printStackTrace();
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            System.out.println("Error while downloading the user data.");
             e.printStackTrace();
         }
     }
