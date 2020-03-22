@@ -24,7 +24,7 @@ echo "[INFO] Waiting for 0 player on the main server under ${SLEEP_MIN} minutes.
 while [ $counter -le ${sleep_10_seconds} ]
 do
     players_number=$(mc-status --json ${HOSTNAME} | jq '.players.online')
-    echo "There is ${players_number} on the main server and the countdown is at $(( $counter/6 )) minutes."
+    echo "[INFO] There is/are ${players_number} player(s) on the main server and the counter is at $(( $counter/6 )) minute(s)."
     if [[ $players_number -eq 0 ]]; then
         counter=$(( $counter + 1 ))
     else
@@ -33,7 +33,7 @@ do
     sleep 10s
 done
 
-echo "[INFO] There is nobody on the server, shutting down all MC servers and the Droplet!"
+echo "[WARN] There is nobody on the server, shutting down all MC servers and the Droplet!"
 
 for serverID in $(echo ${servers} | jq -r '. | keys | .[]'); do
     curl -X PUT -d '{"action":"stop"}' -H "X-Access-Server: ${serverID}" \
