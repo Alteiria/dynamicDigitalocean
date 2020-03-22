@@ -30,8 +30,8 @@ services:
             - /srv/letsencrypt/etc/letsencrypt:/etc/letsencrypt
             - /tmp/pterodactyl:/tmp/pterodactyl
             - /etc/localtime:/etc/localtime
-            - ${DOCKER_ROOT:-/var/lib/docker}:${DOCKER_ROOT:-/var/lib/docker}
-            - ${DOCKER_SOCKET:-/var/run/docker.sock}:${DOCKER_SOCKET:-/var/run/docker.sock}
+            - /srv/docker:/srv/docker
+            - /var/run/docker.sock:/var/run/docker.sock
     watchtower:
         image: containrrr/watchtower
         volumes:

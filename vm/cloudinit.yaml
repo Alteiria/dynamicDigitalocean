@@ -1,5 +1,5 @@
 #cloud-config
-#doctl compute droplet create dydobuild.do.alteiria.fr --enable-ipv6 --image 50944795 --region ams3 --ssh-keys 25332773 --volumes "62b586db-6c34-11ea-ba8a-0a58ac1480e6" --user-data-file=/home/emilien/Documents/dynamicDigitalocean/vm/cloudinit.yaml --size s-2vcpu-4gb --wait
+#doctl compute droplet create dydobuild.do.alteiria.fr --enable-ipv6 --image 50944795 --region ams3 --ssh-keys 25332773 --volumes "1ead2ff2-6c44-11ea-bc36-0a58ac14813b" --user-data-file=/home/emilien/Documents/dynamicDigitalocean/vm/cloudinit.yaml --size s-2vcpu-4gb --wait
 #doctl compute droplet delete dydobuild.do.alteiria.fr -f
 #doctl compute volume create --size 5GiB --region ams3 dydobuild
 
