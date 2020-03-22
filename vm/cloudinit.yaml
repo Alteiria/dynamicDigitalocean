@@ -6,7 +6,7 @@
 timezone: Europe/Paris
 
 mounts:
-    - [ sda, /mnt, auto, "defaults" ]
+    - [ sda, /srv, auto, "defaults" ]
 
 runcmd:
   - [ufw, disable]
@@ -19,7 +19,7 @@ runcmd:
   - ["bash", "/var/tmp/init.sh"]
 
 write_files:
-  - content: ewogImRhdGEtcm9vdCI6ICIvbW50L2RvY2tlciIKfQ==
+  - content: ewogImRhdGEtcm9vdCI6ICIvc3J2L2RvY2tlciIKfQ==
     encoding: b64
     owner: "root:root"
     path: /etc/docker/daemon.json
