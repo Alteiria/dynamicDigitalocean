@@ -94,7 +94,7 @@ public class DigitaloceanApi {
     public String getDropletFirstIPv4(String name) {
         if (!getDroplet(name).getNetworks().getVersion4Networks().isEmpty())
             return (getDroplet(name).getNetworks().getVersion4Networks().get(0).getIpAddress());
-        return(null);
+        return("0.0.0.0");
     }
 
     public DomainRecord getRecord(String name) {

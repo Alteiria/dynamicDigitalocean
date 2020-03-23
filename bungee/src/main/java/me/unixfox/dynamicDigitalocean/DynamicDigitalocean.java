@@ -33,7 +33,7 @@ public class DynamicDigitalocean extends Plugin {
                 String fqdn = v.getName().toLowerCase() + "." + domainName;
                 if (digitaloceanApiWrapper.hasDroplet(fqdn)) {
                     String IPv4address = digitaloceanApiWrapper.getDropletFirstIPv4(fqdn);
-                    if (IPv4address != null) {
+                    if (IPv4address != "0.0.0.0") {
                         removeServer(v.getName());
                         addServer(v.getName(), new InetSocketAddress(IPv4address, 25565), v.getMotd(),
                                 v.isRestricted());

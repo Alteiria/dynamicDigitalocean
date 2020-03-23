@@ -24,3 +24,8 @@ write_files:
     owner: "root:root"
     path: /etc/docker/daemon.json
     permissions: "0644"
+
+swap:
+  filename: /swap.img
+  size: "auto"
+  maxsize: 5368709120

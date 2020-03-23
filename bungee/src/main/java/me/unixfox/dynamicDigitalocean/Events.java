@@ -30,7 +30,7 @@ public class Events implements Listener {
         CheckServer serverChecker = new CheckServer(server);
         if (!serverChecker.isOnline() && serverName.substring(0, 4).equals("dydo")) {
             event.setCancelled(true);
-            player.disconnect(TextComponent.fromLegacyText("Hello " + player.getDisplayName() + "!\n" + "The server is not ready yet. Please come back in two minutes."));
+            player.disconnect(TextComponent.fromLegacyText("Hello " + player.getDisplayName() + "!\n" + "The server is not ready yet. Please come back in 3 minutes."));
             plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
                 @Override
                 public void run() {
