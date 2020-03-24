@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import de.leonhard.storage.Toml;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class DynamicDigitalocean extends Plugin {
 
@@ -27,26 +28,41 @@ public class DynamicDigitalocean extends Plugin {
         refreshDOServers(this.digitalOConfig.getString("general.domain"));
     }
 
-    public void refreshDOServers(final String domainName) {
-        ProxyServer.getInstance().getServers().forEach((k, v) -> {
-            if (v.getName().toLowerCase().substring(0, 4).equals("dydo")) {
-                String fqdn = v.getName().toLowerCase() + "." + domainName;
+    @Override
+    public void onDisable() {
+        getProxy().getPluginManager().unregisterListeners(this);
+        getProxy().getScheduler().cancel(this);
+    }
+
+    private Runnable refreshServers = null;
+    private ScheduledTask refreshServersTask = null;
+
+    private void refreshServers0(final String domainName) {
+        ProxyServer.getInstance().getServers().forEach((name, server) -> {
+            if (server.getName().substring(0, 4).equalsIgnoreCase("dydo")) {
+                String fqdn = server.getName().toLowerCase() + "." + domainName;
                 if (digitaloceanApiWrapper.hasDroplet(fqdn)) {
                     String IPv4address = digitaloceanApiWrapper.getDropletFirstIPv4(fqdn);
-                    if (IPv4address != "0.0.0.0") {
-                        removeServer(v.getName());
-                        addServer(v.getName(), new InetSocketAddress(IPv4address, 25565), v.getMotd(),
-                                v.isRestricted());
+                    if (IPv4address != null) {
+                        removeServer(server.getName());
+                        addServer(server.getName(), new InetSocketAddress(IPv4address, 25565), server.getMotd(),
+                                server.isRestricted());
                     }
                 }
             }
         });
-        getProxy().getScheduler().schedule(this, new Runnable() {
-            @Override
-            public void run() {
-                refreshDOServers(domainName);
-            }
-        }, 30, 0, TimeUnit.SECONDS);
+    }
+
+    public void refreshDOServers(final String domainName) {
+        if (this.refreshServers == null && domainName != null) {
+            this.refreshServers = () -> refreshServers0(domainName);
+        }
+        if (this.refreshServersTask != null) {
+            getProxy().getScheduler().cancel(this.refreshServersTask);
+        }
+        if (domainName != null) {
+            this.refreshServersTask = getProxy().getScheduler().schedule(this, this.refreshServers, 0, 30, TimeUnit.SECONDS);
+        }
     }
 
     public DigitaloceanApi getDigitalOceanWrapper() {

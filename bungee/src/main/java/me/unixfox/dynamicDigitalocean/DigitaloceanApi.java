@@ -16,6 +16,7 @@ import com.myjeeva.digitalocean.pojo.Droplet;
 import com.myjeeva.digitalocean.pojo.Droplets;
 import com.myjeeva.digitalocean.pojo.Image;
 import com.myjeeva.digitalocean.pojo.Key;
+import com.myjeeva.digitalocean.pojo.Network;
 import com.myjeeva.digitalocean.pojo.Region;
 import com.myjeeva.digitalocean.pojo.Volume;
 import com.myjeeva.digitalocean.pojo.Volumes;
@@ -24,13 +25,14 @@ import org.apache.commons.io.IOUtils;
 
 public class DigitaloceanApi {
 
+    private static final String DROPLET_TAG = "dynamicdigitalocean";
+
     private String apiKey;
     private String region;
     private String dropletSize;
     private int sshKeyID;
     private int imageID;
     private String domainName;;
-    private String tag = "dynamicdigitalocean";
     private DigitalOcean apiClient;
     private String digitalOceanExceptionMessage = "DigitalOcean considered that the request was incorrect. Please verify that your config.toml is correct.";
     private String requestUnsuccessfulExceptionMessage = "Error communicating with DigitalOcean.";
@@ -49,23 +51,23 @@ public class DigitaloceanApi {
     }
 
     public boolean hasVolume(String name) {
-        if (getVolume(name) != null) {
-            return (true);
-        } else {
-            return (false);
-        }
+        return getVolume(name) != null;
     }
 
     public String getVolumeID(String name) {
-        return (getVolume(name).getId());
+        Volume volume = getVolume(name);
+        return (volume != null) ? volume.getId() : null;
     }
 
     public Volume getVolume(String name) {
+        if (name == null) {
+            return null;
+        }
         try {
             Volumes volumes = apiClient.getAvailableVolumes(region);
-            for (int i = 0; i < volumes.getVolumes().size(); i++) {
-                if (volumes.getVolumes().get(i).getName().equals(name)) {
-                    return (volumes.getVolumes().get(i));
+            for (Volume volume : volumes.getVolumes()) {
+                if (volume.getName().equals(name)) {
+                    return volume;
                 }
             }
         } catch (DigitalOceanException e) {
@@ -77,11 +79,14 @@ public class DigitaloceanApi {
     }
 
     public Droplet getDroplet(String name) {
+        if (name == null) {
+            return null;
+        }
         try {
-            Droplets droplets = apiClient.getAvailableDropletsByTagName(tag, 0, 30);
-            for (int i = 0; i < droplets.getDroplets().size(); i++) {
-                if (droplets.getDroplets().get(i).getName().equals(name)) {
-                    return (droplets.getDroplets().get(i));
+            Droplets droplets = apiClient.getAvailableDropletsByTagName(DROPLET_TAG, 0, 30);
+            for (Droplet droplet : droplets.getDroplets()) {
+                if (droplet.getName().equals(name)) {
+                    return droplet;
                 }
             }
         } catch (DigitalOceanException e) {
@@ -93,17 +98,22 @@ public class DigitaloceanApi {
     }
 
     public String getDropletFirstIPv4(String name) {
-        if (!getDroplet(name).getNetworks().getVersion4Networks().isEmpty())
-            return (getDroplet(name).getNetworks().getVersion4Networks().get(0).getIpAddress());
-        return("0.0.0.0");
+        Droplet droplet = getDroplet(name);
+        if (droplet != null) {
+            return droplet.getNetworks().getVersion4Networks().stream().findFirst().map(Network::getIpAddress).orElse(null);
+        }
+        return null;
     }
 
     public DomainRecord getRecord(String name) {
+        if (name == null) {
+            return null;
+        }
         try {
-            DomainRecords domainRecords = apiClient.getDomainRecords(domainName, 0, null);
-            for (int i = 0; i < domainRecords.getDomainRecords().size(); i++) {
-                if (domainRecords.getDomainRecords().get(i).getName().equals(name)) {
-                    return (domainRecords.getDomainRecords().get(i));
+            DomainRecords domainRecords = apiClient.getDomainRecords(domainName, null, null);
+            for (DomainRecord record : domainRecords.getDomainRecords()) {
+                if (record.getName().equals(name)) {
+                    return record;
                 }
             }
         } catch (DigitalOceanException e) {
@@ -115,18 +125,16 @@ public class DigitaloceanApi {
     }
 
     public int getRecordID(String name) {
-        return (getRecord(name).getId());
+        DomainRecord record = getRecord(name);
+        return (record != null) ? record.getId() : -1;
     }
 
     public boolean hasRecord(String name) {
-        if (getRecord(name) != null) {
-            return (true);
-        } else {
-            return (false);
-        }
+        return getRecord(name) != null;
     }
 
     public void addOrUpdateIPv4Record(String IPv4address, String name) {
+        if (IPv4address == null || name == null) return;
         try {
             if (apiClient.getDomainInfo(domainName) != null) {
                 DomainRecord record = new DomainRecord(name, IPv4address, "A");
@@ -144,12 +152,7 @@ public class DigitaloceanApi {
     }
 
     public boolean hasDroplet(String name) {
-
-        if (getDroplet(name) != null) {
-            return (true);
-        } else {
-            return (false);
-        }
+        return getDroplet(name) != null;
     }
 
     public void createDroplet(String name) {
@@ -167,7 +170,7 @@ public class DigitaloceanApi {
                 newDroplet.setImage(new Image(imageID));
                 newDroplet.setVolumeIds(Arrays.asList(getVolumeID(name)));
                 newDroplet.setUserData(userData);
-                newDroplet.setTags(Arrays.asList(tag));
+                newDroplet.setTags(Arrays.asList(DROPLET_TAG));
                 if (sshKeyID != 0)
                     newDroplet.setKeys(Arrays.asList(new Key(sshKeyID)));
                 apiClient.createDroplet(newDroplet);
