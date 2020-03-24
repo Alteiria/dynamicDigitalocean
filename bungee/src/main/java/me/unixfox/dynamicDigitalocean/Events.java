@@ -2,7 +2,6 @@ package me.unixfox.dynamicDigitalocean;
 
 import java.util.concurrent.TimeUnit;
 
-import de.leonhard.storage.Toml;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -12,17 +11,17 @@ import net.md_5.bungee.event.EventHandler;
 
 public class Events implements Listener {
 
-    private Toml toml = new Toml("config", "plugins/dynamicDigitalocean");
-    String domainName = toml.get("general.domain", "example.org");
+    private final String domainName;
     private final DynamicDigitalocean plugin;
 
     public Events(final DynamicDigitalocean plugin) {
         this.plugin = plugin;
+        this.domainName = plugin.getDigitalOceanConfig().getString("general.domain");
     }
 
     @EventHandler
     public void onConnect(ServerConnectEvent event) {
-        DigitaloceanApi digitaloceanApiWrapper = new DigitaloceanApi(plugin);
+        DigitaloceanApi digitaloceanApiWrapper = plugin.getDigitalOceanWrapper();
         ProxiedPlayer player = event.getPlayer();
         ServerInfo server = event.getTarget();
         String serverName = server.getName().toLowerCase();

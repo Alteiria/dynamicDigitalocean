@@ -2,9 +2,9 @@ package me.unixfox.dynamicDigitalocean;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 import com.myjeeva.digitalocean.DigitalOcean;
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
@@ -22,25 +22,30 @@ import com.myjeeva.digitalocean.pojo.Volumes;
 
 import org.apache.commons.io.IOUtils;
 
-import de.leonhard.storage.Toml;
-
 public class DigitaloceanApi {
 
-    private Toml toml = new Toml("config", "plugins/dynamicDigitalocean");
-    private String apiKey = toml.get("general.apiKey", "yourapikey");
-    private String region = toml.get("general.region", "ams3");
-    private String dropletSize = toml.get("general.size", "s-2vcpu-4gb");
-    private int sshKeyID = Integer.parseInt(toml.get("general.sshKeyID", "0"));
-    private int imageID = Integer.parseInt(toml.get("general.imageID", "50944795"));
-    private String domainName = toml.get("general.domain", "example.org");
+    private String apiKey;
+    private String region;
+    private String dropletSize;
+    private int sshKeyID;
+    private int imageID;
+    private String domainName;;
     private String tag = "dynamicdigitalocean";
-    private DigitalOcean apiClient = new DigitalOceanClient(apiKey);
+    private DigitalOcean apiClient;
     private String digitalOceanExceptionMessage = "DigitalOcean considered that the request was incorrect. Please verify that your config.toml is correct.";
     private String requestUnsuccessfulExceptionMessage = "Error communicating with DigitalOcean.";
     private final DynamicDigitalocean plugin;
 
     public DigitaloceanApi(final DynamicDigitalocean plugin) {
         this.plugin = plugin;
+        this.apiKey = plugin.getDigitalOceanConfig().getString("general.apiKey");
+        this.region = plugin.getDigitalOceanConfig().getString("general.region");
+        this.dropletSize = plugin.getDigitalOceanConfig().getString("general.size");
+        this.sshKeyID = plugin.getDigitalOceanConfig().getInt("general.sshKeyID");
+        this.imageID = plugin.getDigitalOceanConfig().getInt("general.imageID");
+        this.domainName = plugin.getDigitalOceanConfig().getString("general.domain");
+
+        this.apiClient = new DigitalOceanClient(this.apiKey);
     }
 
     public boolean hasVolume(String name) {
@@ -64,11 +69,9 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            plugin.getLogger().warning(digitalOceanExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, digitalOceanExceptionMessage, e);
         } catch (RequestUnsuccessfulException e) {
-            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, requestUnsuccessfulExceptionMessage, e);
         }
         return (null);
     }
@@ -82,11 +85,9 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            plugin.getLogger().warning(digitalOceanExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, digitalOceanExceptionMessage, e);
         } catch (RequestUnsuccessfulException e) {
-            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, requestUnsuccessfulExceptionMessage, e);
         }
         return (null);
     }
@@ -106,11 +107,9 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            plugin.getLogger().warning(digitalOceanExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, digitalOceanExceptionMessage, e);
         } catch (RequestUnsuccessfulException e) {
-            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, requestUnsuccessfulExceptionMessage, e);
         }
         return (null);
     }
@@ -138,11 +137,9 @@ public class DigitaloceanApi {
                 }
             }
         } catch (DigitalOceanException e) {
-            plugin.getLogger().warning(digitalOceanExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, digitalOceanExceptionMessage, e);
         } catch (RequestUnsuccessfulException e) {
-            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, requestUnsuccessfulExceptionMessage, e);
         }
     }
 
@@ -183,14 +180,11 @@ public class DigitaloceanApi {
                 plugin.getLogger().warning("The volume " + name + " doesn't exist yet, please create it manually.");
             }
         } catch (DigitalOceanException e) {
-            plugin.getLogger().warning(digitalOceanExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, digitalOceanExceptionMessage, e);
         } catch (RequestUnsuccessfulException e) {
-            plugin.getLogger().warning(requestUnsuccessfulExceptionMessage);
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, requestUnsuccessfulExceptionMessage, e);
         } catch (IOException e) {
-            plugin.getLogger().warning("Error while downloading the user data.");
-            e.printStackTrace();
+            plugin.getLogger().log(Level.WARNING, "Error while downloading the user data.", e);
         }
     }
 }
