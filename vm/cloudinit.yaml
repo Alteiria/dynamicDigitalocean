@@ -24,6 +24,11 @@ write_files:
     owner: "root:root"
     path: /etc/docker/daemon.json
     permissions: "0644"
+  - content: QVBUOjpQZXJpb2RpYzo6VXBkYXRlLVBhY2thZ2UtTGlzdHMgIjAiOwpBUFQ6OlBlcmlvZGljOjpVbmF0dGVuZGVkLVVwZ3JhZGUgIjAiOw==
+    encoding: b64
+    owner: "root:root"
+    path: /etc/apt/apt.conf.d/20auto-upgrades
+    permissions: "0644"
 
 swap:
   filename: /swap.img
